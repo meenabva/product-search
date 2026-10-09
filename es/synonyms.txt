@@ -1,0 +1,13 @@
+# Solr synonym format: comma-separated words are equivalent.
+# Applied at SEARCH time only (search_analyzer), so edits need an index close/open or
+# re-create, never a reindex. Tip: check the zero-result queries to find new synonyms.
+tv, television, telly
+laptop, notebook
+smartphone, mobile, cell phone, cellphone, phone
+headphones, headset, headphone
+earbuds, earphones, tws
+sneakers, trainers, running shoes
+tshirt, t-shirt, tee
+mixie, mixer grinder, blender
+flask, water bottle
+smartwatch, smart watch, fitness band
