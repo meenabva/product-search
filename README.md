@@ -1,4 +1,4 @@
-# E-commerce Product Search (Elasticsearch playground)
+# Product Search (Elasticsearch playground)
 
 Phases 1–4: setup and data, index design, full-text search, faceted navigation.
 
@@ -7,7 +7,7 @@ docker-compose.yml Elasticsearch 8.15 + Kibana (single node, security off)
 data/generate_products.py 10k realistic products -> data/products.jsonl (stdlib only)
 es/mappings.py analyzers (stemming, synonyms, edge n-gram) + mappings
 es/synonyms.txt search-time synonyms
-es/setup_index.py versioned index (products_v1) + bulk load + alias "products"
+es/setup.py versioned index (products_v1) + bulk load + alias "products"
 search/query_builder.py pure DSL builders: full-text, boosts, facets, sort, paging
 search/service.py runs searches, formats hits and facets
 api/main.py FastAPI: /search, /product/{id}, /analyze, /health
@@ -17,10 +17,10 @@ api/main.py FastAPI: /search, /product/{id}, /analyze, /health
 
 ```bash
 docker compose up -d # wait ~30s; check http://localhost:9200
-pip install -r requirements.txt
-python -m data.generate_products # already generated; re-run to change --count/--seed
-python -m es.setup_index --recreate
-uvicorn api.main:app --reload # http://localhost:8000/docs
+uv sync
+uv run python -m data.generate_products # already generated; re-run to change --count/--seed
+uv run python -m es.setup --recreate
+uv run uvicorn api.main:app --reload # http://localhost:8000/docs
 ```
 
 Kibana Dev Tools is at http://localhost:5601/app/dev_tools#/console.
@@ -50,7 +50,7 @@ Change the boosts in `with_business_boosts()` or the `name^3` field weight and c
 are added only at search time). Try `autocomplete` to see edge n-grams.
 4. **Synonyms.** Edit `es/synonyms.txt` and rebuild with `--recreate`. Search analyzers can
 change without reindexing, but inline synonyms still need the index closed and reopened.
-5. **Zero-downtime reindex.** Change a mapping, run `python -m es.setup_index --version 2`, and
+5. **Zero-downtime reindex.** Change a mapping, run `python -m es.setup --version 2`, and
 the alias swaps atomically. Delete `products_v1` afterwards.
 6. **Pagination limits.** `page=600` returns 400 (the 10k window). Implement `search_after` + PIT.
 7. **Nested vs flat.** Map `variants` as a plain `object` and see `color=black&size=512GB`
